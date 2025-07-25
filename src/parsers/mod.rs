@@ -7,7 +7,6 @@ pub use details::*;
 pub use price::*;
 
 use html_escape::decode_html_entities;
-use crate::models::EMOJI_QUESTION;
 
 /// Clean and normalize text by removing extra whitespace and decoding HTML entities
 pub fn clean_text(text: &str) -> String {

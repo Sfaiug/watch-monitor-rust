@@ -1,7 +1,6 @@
 use anyhow::Result;
 use chrono::{DateTime, Utc, Duration};
 use reqwest::Client;
-use serde::Deserialize;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tracing::{info, error};
@@ -21,11 +20,6 @@ impl Default for ExchangeRateCache {
     }
 }
 
-#[derive(Debug, Deserialize)]
-struct ExchangeRateResponse {
-    result: String,
-    conversion_rate: Option<f64>,
-}
 
 pub struct ExchangeRateClient {
     cache: Arc<Mutex<ExchangeRateCache>>,

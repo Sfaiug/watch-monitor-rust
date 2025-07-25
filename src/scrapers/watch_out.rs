@@ -11,8 +11,7 @@ use url::Url;
 use crate::config::{Config, SiteConfig};
 use crate::models::{Site, WatchListing};
 use crate::parsers::{clean_text, format_price_eur_display, get_price_string_for_hash, 
-                      parse_year_from_string, parse_box_papers_status, get_condition_display,
-                      extract_reference};
+                      parse_year_from_string, parse_box_papers_status, get_condition_display};
 use crate::scrapers::WatchScraper;
 use crate::utils::http::fetch_with_retry;
 

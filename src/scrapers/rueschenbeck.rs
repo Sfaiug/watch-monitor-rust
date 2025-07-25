@@ -2,16 +2,15 @@ use async_trait::async_trait;
 use anyhow::Result;
 use regex::Regex;
 use reqwest::Client;
-use scraper::{Html, Selector, ElementRef};
+use scraper::{Html, Selector};
 use std::sync::Arc;
 use tracing::{error, info};
 use url::Url;
 
 use crate::config::{Config, SiteConfig};
-use crate::models::{Site, WatchListing, BoxStatus, PapersStatus};
+use crate::models::{Site, WatchListing, PapersStatus};
 use crate::parsers::{clean_text, format_price_eur_display, get_price_string_for_hash, 
-                      parse_year_from_string, parse_box_papers_status, get_condition_display,
-                      extract_reference};
+                      parse_year_from_string, parse_box_papers_status, get_condition_display};
 use crate::scrapers::WatchScraper;
 use crate::utils::http::fetch_with_retry;
 
@@ -164,7 +163,7 @@ fn extract_watch_data(html: &str, base_url: &str) -> Result<Vec<WatchData>> {
                 data.title = clean_text(&prod_elem.text().collect::<String>());
                 
                 // Extract reference from beginning of title
-                let ref_re = Regex::new(r"^([A-Za-z0-9\\-./]+)").unwrap();
+                let ref_re = Regex::new(r"^([A-Za-z0-9./\-]+)").unwrap();
                 if let Some(cap) = ref_re.captures(&data.title) {
                     if let Some(m) = cap.get(1) {
                         let potential_ref = m.as_str();
@@ -274,7 +273,7 @@ impl RueschenbeckScraper {
                 
                 // Parse diameter
                 if !details.diameter_text.is_empty() {
-                    let dia_re = Regex::new(r"(\\d{1,2}(?:[.,]\\d{1,2})?)\\s*mm").unwrap();
+                    let dia_re = Regex::new(r"(\d{1,2}(?:[.,]\d{1,2})?)\s*mm").unwrap();
                     if let Some(cap) = dia_re.captures(&details.diameter_text) {
                         if let Some(m) = cap.get(1) {
                             watch.diameter = format!("{} mm", m.as_str().replace(",", "."));
@@ -286,7 +285,7 @@ impl RueschenbeckScraper {
                             .trim()
                             .replace(",", ".")
                             .replace(" ", "");
-                        if Regex::new(r"^\\d+(\\.\\d+)?$").unwrap().is_match(&cleaned) {
+                        if Regex::new(r"^\d+(\.\d+)?$").unwrap().is_match(&cleaned) {
                             watch.diameter = format!("{} mm", cleaned);
                         } else {
                             watch.diameter = details.diameter_text.clone();
